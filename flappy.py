@@ -61,8 +61,6 @@ def message_display(text):
     gameDisplay.blit(TextSurf, TextRect)
 
     pygame.display.update()
-
-    game_loop() # erase when is redy
     
 # Game is over
 def die():
