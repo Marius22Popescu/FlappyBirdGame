@@ -21,7 +21,8 @@ display_height = 400
 
 black = (0,0,0)
 white = (255,255,255)
-red = (255,0,0)
+red = (200,0,0)
+bright_red = (255,0,0)
 green = (0,255,0)
 
 bird_width = 40
@@ -66,6 +67,50 @@ def message_display(text):
 # Game is over
 def die():
     message_display('Game Over')
+
+#define the start button method
+#the method pass a message, x and y coordinates, width, height, a inactive collor, a active collor and a action/method
+def button(msg,x,y,w,h,ic,ac, action=None):
+    mouse = pygame.mouse.get_pos() # Grab mouse position
+    click = pygame.mouse.get_pressed() # Get the click
+    # Create the start and quit buttons
+    if x+w > mouse[0] > x and y+h > mouse[1] > y: # If the mouse cursor is over the button
+        pygame.draw.rect(gameDisplay, ac, (x, y, w, h)) # Color the mouse lighter to look interactive
+        if click[0] == 1 and action != None:
+            action()
+    else:
+        pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
+    smallText = pygame.font.Font('freesansbold.ttf', 20)
+    TextSurf, TextRect = text_objects(msg, smallText)   #set the tesx and the font and type of text inside the rectangle where will be the text 
+    TextRect.center = ((x+(w/2)), (y+(h/2))) #set this mesage in the center of screen
+    gameDisplay.blit(TextSurf, TextRect)
+
+# Define the quit game method
+def quitgame():
+    pygame.quit()
+    quit()
+
+
+# The game intro method
+def game_intro():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        gameDisplay.fill(white)
+        largeText = pygame.font.Font('freesansbold.ttf', 80) #(font type, font size)
+        TextSurf, TextRect = text_objects("Flappy Bird", largeText)
+        TextRect.center = ((display_width/2) , (display_height/2)) 
+        gameDisplay.blit(TextSurf, TextRect)
+        mouse = pygame.mouse.get_pos() # Grab mouse position
+        # Call the button method
+        button("PLAY", 200, 300, 100, 50, red, bright_red, game_loop)
+        
+        pygame.display.update()
+        clock.tick(15)
 
 # The main game loop
 def game_loop():
@@ -175,6 +220,9 @@ def game_loop():
         
         clock.tick(60)
 
+#call the intro
+game_intro()
+#call the game loop
 game_loop()
 pygame.quit()
 quit()
