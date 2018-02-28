@@ -16,6 +16,10 @@ import random
 
 pygame.init()
 
+# get sound
+crash_sound = pygame.mixer.Sound("crash.wav")  
+pygame.mixer.music.load("bird.wav")
+
 display_width = 500
 display_height = 400
 
@@ -24,6 +28,7 @@ white = (255,255,255)
 red = (200,0,0)
 bright_red = (255,0,0)
 green = (0,255,0)
+bright_green = (0,255,0)
 
 bird_width = 40
 bird_height = 32
@@ -33,6 +38,8 @@ pygame.display.set_caption('Flappy bird')
 clock = pygame.time.Clock()
 
 birdImg = pygame.image.load('forwardbird3.png')
+
+pause = False # define and set pause to false
 
 # This method will count the number of pipes passed and keep the score
 def pipe_score(count):
@@ -60,11 +67,24 @@ def message_display(text):
     TextRect.center = ((display_width/2), (display_height/2))
     gameDisplay.blit(TextSurf, TextRect)
 
-    pygame.display.update()
+#    pygame.display.update()
     
 # Game is over
 def die():
+    # set the music
+    pygame.mixer.music.stop()
+    pygame.mixer.Sound.play(crash_sound)
+    
     message_display('Game Over')
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+              quitgame()
+        # Call button method
+        button("Play Again!", 100, 300, 150, 50, green, bright_green, game_loop)
+        button("Quit", 300, 300, 100, 50, red, bright_red, quitgame)
+        pygame.display.update()
+        clock.tick(15)
 
 #define the start button method
 #the method pass a message, x and y coordinates, width, height, a inactive collor, a active collor and a action/method
@@ -95,23 +115,50 @@ def game_intro():
     while intro:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                quitgame()
 
         gameDisplay.fill(white)
-        largeText = pygame.font.Font('freesansbold.ttf', 80) #(font type, font size)
-        TextSurf, TextRect = text_objects("Flappy Bird", largeText)
-        TextRect.center = ((display_width/2) , (display_height/2)) 
-        gameDisplay.blit(TextSurf, TextRect)
-        mouse = pygame.mouse.get_pos() # Grab mouse position
-        # Call the button method
-        button("PLAY", 200, 300, 100, 50, red, bright_red, game_loop)
-        
+        # display the message on the screen
+        message_display('Flappy Bird')
+        # Call button method
+        button("PLAY!", 100, 300, 100, 50, green, bright_green, game_loop)
+        button("Quit", 300, 300, 100, 50, red, bright_red, quitgame)
+       
         pygame.display.update()
         clock.tick(15)
 
+# The unpause method
+def unpause():
+    global pause
+    pygame.mixer.music.unpause()
+    pause = False
+    
+
+# Define the game pause method
+def paused():
+    pygame.mixer.music.pause() # stop the music
+    
+    message_display('Paused')
+    while pause:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitgame()
+ 
+        # Call button method
+        button("Continue", 100, 300, 100, 50, green, bright_green, unpause)
+        button("Quit", 300, 300, 100, 50, red, bright_red, quitgame)
+       
+        pygame.display.update()
+        clock.tick(15)       
+
 # The main game loop
 def game_loop():
+
+     # set the music
+    pygame.mixer.Sound.stop(crash_sound)
+    pygame.mixer.music.play(-1) # -1 will play the music in a loop
+    global pause
+    
     x_bird = (display_width * 0.05)
     y_bird = (display_height * 0.4)
 
@@ -146,12 +193,14 @@ def game_loop():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                quitgame()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     y_bird_change = -5
+                if event.key == pygame.K_p: # if 'p' is pressed then pause the game
+                    pause = True
+                    paused()  # call the paused method
             if event.type == pygame.MOUSEBUTTONDOWN:
                 y_bird_change = -5
                 
@@ -222,5 +271,4 @@ def game_loop():
 game_intro()
 #call the game loop
 game_loop()
-pygame.quit()
-quit()
+quitgame()
