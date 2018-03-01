@@ -23,13 +23,15 @@ pygame.mixer.music.load("bird.wav")
 display_width = 500
 display_height = 400
 
+# set colors
 black = (0,0,0)
 white = (255,255,255)
 red = (200,0,0)
 bright_red = (255,0,0)
-green = (0,255,0)
+green = (0,230,0)
 bright_green = (0,255,0)
 
+# set birds
 bird_width = 40
 bird_height = 32
 
@@ -37,7 +39,10 @@ gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Flappy bird')
 clock = pygame.time.Clock()
 
+# get the images for background and bird
 birdImg = pygame.image.load('forwardbird3.png')
+background = pygame.image.load('background.png')
+background2 = pygame.image.load('background2.png')
 
 pause = False # define and set pause to false
 
@@ -64,10 +69,8 @@ def text_objects(text, font):
 def message_display(text):
     largeText = pygame.font.Font('freesansbold.ttf', 40)
     TextSurf, TextRect = text_objects(text,largeText)
-    TextRect.center = ((display_width/2), (display_height/2))
+    TextRect.center = ((display_width/2), (160))
     gameDisplay.blit(TextSurf, TextRect)
-
-#    pygame.display.update()
     
 # Game is over
 def die():
@@ -117,7 +120,10 @@ def game_intro():
             if event.type == pygame.QUIT:
                 quitgame()
 
-        gameDisplay.fill(white)
+
+        # display the background
+        gameDisplay.blit(background2, (0,0))
+ #       gameDisplay.fill(white)
         # display the message on the screen
         message_display('Flappy Bird')
         # Call button method
@@ -195,19 +201,19 @@ def game_loop():
             if event.type == pygame.QUIT:
                 quitgame()
 
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    y_bird_change = -5
+                    y_bird_change = -6
                 if event.key == pygame.K_p: # if 'p' is pressed then pause the game
                     pause = True
                     paused()  # call the paused method
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                y_bird_change = -5
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                y_bird_change = -6
                 
-            if event.type == pygame.KEYUP:
+            elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     y_bird_change = 0
-            if event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP:
                 y_bird_change = 0
 
 
@@ -216,7 +222,8 @@ def game_loop():
         if (y_bird < -10) :
             y_bird = -10
 
-        gameDisplay.fill(white)
+        # display the background
+        gameDisplay.blit(background, (0,0))
 
         # When a pipe has disappeared from the screen, create a new pipe for the player to go between
         if (pipe_x < (0 - pipe_width)) :
