@@ -123,7 +123,6 @@ def game_intro():
 
         # display the background
         gameDisplay.blit(background2, (0,0))
- #       gameDisplay.fill(white)
         # display the message on the screen
         message_display('Flappy Bird')
         # Call button method
